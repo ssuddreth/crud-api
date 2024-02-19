@@ -1,43 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Product = require('./models/product.model');
+const productRoute = require('./routes/product.route');
 const app = express();
 
+//Middleware
 app.use(express.json());
+//app.use(express.urlencoded({extended: false}));
 
-mongoose.connect('mongodb+srv://stevensuddreth:panthers2024@backenddb.szffjss.mongodb.net/Node-API?retryWrites=true&w=majority')
-    .then(() => console.log('Connected to MongoDB!')).catch(() => console.log('Connection failed!'));
+mongoose.connect('mongodb+srv://stevensuddreth:panthers2024@backenddb.szffjss.mongodb.net/Node-API?retryWrites=true&w=majority').then(() => console.log('Connected to MongoDB!')).catch(() => console.log('Connection failed!'));
+
+//Routes
+app.use('/api/products', productRoute);
 
 app.get('/', (req, res) => {
     res.send('Hello from Node API server');
-});
-
-app.get('/api/product/:id', async (req, res) => {
-    try {
-        const {id} = req.params;
-        const product = await Product.findById(id);
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-});
-
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await Product.find({});
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-})
-
-app.post('/api/products', async (req, res) => {
-    try {
-        const product = await Product.create(req.body);
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
 });
 
 app.listen(3000, () => {
